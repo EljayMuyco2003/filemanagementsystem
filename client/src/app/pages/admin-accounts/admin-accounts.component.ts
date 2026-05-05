@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-admin-accounts',
@@ -27,7 +28,8 @@ export class AdminAccountsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: ModalService
   ) {
     const user = this.authService.getCurrentUser();
     this.userName = user?.email || '';
@@ -90,47 +92,54 @@ export class AdminAccountsComponent implements OnInit {
     this.error = '';
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.userForm.invalid) {
       this.userForm.markAllAsTouched();
       return;
     }
 
-    this.creating = true;
     this.error = '';
     this.success = '';
 
-    this.userService.createUser(this.userForm.value).subscribe({
-      next: (response) => {
-        this.success = 'User created successfully!';
-        this.creating = false;
-        this.showCreateForm = false;
-        this.resetForm();
-        this.loadUsers();
-        setTimeout(() => this.success = '', 3000);
-      },
-      error: (err) => {
-        this.error = err.error?.error || 'Failed to create user';
-        this.creating = false;
-      }
-    });
+    try {
+      await this.modalService.withLoading(
+        () => this.userService.createUser(this.userForm.value).toPromise(),
+        'Creating user...'
+      );
+
+      this.success = 'User created successfully!';
+      this.showCreateForm = false;
+      this.resetForm();
+      this.loadUsers();
+      setTimeout(() => this.success = '', 3000);
+    } catch (err: any) {
+      this.error = err.error?.error || 'Failed to create user';
+    }
   }
 
-  deleteUser(id: number): void {
-    if (!confirm('Are you sure you want to delete this user?')) {
-      return;
-    }
-
-    this.userService.deleteUser(id).subscribe({
-      next: () => {
-        this.success = 'User deleted successfully!';
-        this.loadUsers();
-        setTimeout(() => this.success = '', 3000);
-      },
-      error: (err) => {
-        this.error = 'Failed to delete user';
-      }
+  async deleteUser(id: number): Promise<void> {
+    const confirmed = await this.modalService.confirm({
+      title: 'Delete User',
+      message: 'Are you sure you want to delete this user? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
     });
+
+    if (!confirmed) return;
+
+    try {
+      await this.modalService.withLoading(
+        () => this.userService.deleteUser(id).toPromise(),
+        'Deleting user...'
+      );
+
+      this.success = 'User deleted successfully!';
+      this.loadUsers();
+      setTimeout(() => this.success = '', 3000);
+    } catch (err) {
+      this.error = 'Failed to delete user';
+    }
   }
 
   formatDate(date: string): string {
@@ -141,8 +150,18 @@ export class AdminAccountsComponent implements OnInit {
     });
   }
 
-  logout(): void {
-    this.authService.logout();
+  async logout(): Promise<void> {
+    const confirmed = await this.modalService.confirm({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+
+    if (confirmed) {
+      this.authService.logout();
+    }
   }
 
   toggleMobileMenu(): void {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -15,7 +16,10 @@ export class SidebarComponent implements OnInit {
   isAdmin = false;
   mobileMenuOpen = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private modalService: ModalService
+  ) {}
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
@@ -31,7 +35,17 @@ export class SidebarComponent implements OnInit {
     this.mobileMenuOpen = false;
   }
 
-  logout(): void {
-    this.authService.logout();
+  async logout(): Promise<void> {
+    const confirmed = await this.modalService.confirm({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+
+    if (confirmed) {
+      this.authService.logout();
+    }
   }
 }

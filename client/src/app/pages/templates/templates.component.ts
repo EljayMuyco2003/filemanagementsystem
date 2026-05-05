@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { RouterLink } from '@angular/router';
 import { TemplateService } from '../../services/template.service';
 import { AuthService } from '../../services/auth.service';
+import { ModalService } from '../../services/modal.service';
 import { Template } from '../../models/template.model';
 
 @Component({
@@ -38,7 +39,8 @@ export class TemplatesComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private templateService: TemplateService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: ModalService
   ) {
     const user = this.authService.getCurrentUser();
     this.userName = user?.email || '';
@@ -105,7 +107,7 @@ export class TemplatesComponent implements OnInit {
     this.error = '';
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.templateForm.invalid) {
       this.templateForm.markAllAsTouched();
       return;
@@ -116,7 +118,6 @@ export class TemplatesComponent implements OnInit {
       return;
     }
 
-    this.creating = true;
     this.error = '';
     this.success = '';
 
@@ -125,37 +126,45 @@ export class TemplatesComponent implements OnInit {
       file: this.selectedFile
     };
 
-    this.templateService.createTemplate(formData).subscribe({
-      next: (response) => {
-        this.success = 'Template created successfully!';
-        this.creating = false;
-        this.showCreateForm = false;
-        this.resetForm();
-        this.loadTemplates();
-        setTimeout(() => this.success = '', 3000);
-      },
-      error: (err) => {
-        this.error = err.error?.error || 'Failed to create template';
-        this.creating = false;
-      }
-    });
+    try {
+      await this.modalService.withLoading(
+        () => this.templateService.createTemplate(formData).toPromise(),
+        'Creating template...'
+      );
+
+      this.success = 'Template created successfully!';
+      this.showCreateForm = false;
+      this.resetForm();
+      this.loadTemplates();
+      setTimeout(() => this.success = '', 3000);
+    } catch (err: any) {
+      this.error = err.error?.error || 'Failed to create template';
+    }
   }
 
-  deleteTemplate(id: number): void {
-    if (!confirm('Are you sure you want to delete this template?')) {
-      return;
-    }
-
-    this.templateService.deleteTemplate(id).subscribe({
-      next: () => {
-        this.success = 'Template deleted successfully!';
-        this.loadTemplates();
-        setTimeout(() => this.success = '', 3000);
-      },
-      error: (err) => {
-        this.error = 'Failed to delete template';
-      }
+  async deleteTemplate(id: number): Promise<void> {
+    const confirmed = await this.modalService.confirm({
+      title: 'Delete Template',
+      message: 'Are you sure you want to delete this template? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
     });
+
+    if (!confirmed) return;
+
+    try {
+      await this.modalService.withLoading(
+        () => this.templateService.deleteTemplate(id).toPromise(),
+        'Deleting template...'
+      );
+
+      this.success = 'Template deleted successfully!';
+      this.loadTemplates();
+      setTimeout(() => this.success = '', 3000);
+    } catch (err) {
+      this.error = 'Failed to delete template';
+    }
   }
 
   formatDate(date: string): string {
@@ -166,8 +175,18 @@ export class TemplatesComponent implements OnInit {
     });
   }
 
-  logout(): void {
-    this.authService.logout();
+  async logout(): Promise<void> {
+    const confirmed = await this.modalService.confirm({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+
+    if (confirmed) {
+      this.authService.logout();
+    }
   }
 
   toggleMobileMenu(): void {

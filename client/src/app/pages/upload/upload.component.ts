@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FileService } from '../../services/file.service';
 import { AuthService } from '../../services/auth.service';
+import { ModalService } from '../../services/modal.service';
 import { UploadedFile, FileWithUser } from '../../models/file.model';
 
 @Component({
@@ -26,7 +27,8 @@ export class UploadComponent implements OnInit {
 
   constructor(
     private fileService: FileService,
-    private authService: AuthService
+    private authService: AuthService,
+    private modalService: ModalService
   ) {
     const user = this.authService.getCurrentUser();
     this.userName = user?.email || '';
@@ -77,46 +79,53 @@ export class UploadComponent implements OnInit {
     }
   }
 
-  uploadFile(): void {
+  async uploadFile(): Promise<void> {
     if (!this.selectedFile) {
       this.error = 'Please select a file';
       return;
     }
 
-    this.uploading = true;
     this.error = '';
     this.success = '';
 
-    this.fileService.uploadFile(this.selectedFile).subscribe({
-      next: (response) => {
-        this.success = 'File uploaded successfully!';
-        this.selectedFile = null;
-        this.uploading = false;
-        this.loadFiles();
-        setTimeout(() => this.success = '', 3000);
-      },
-      error: (err) => {
-        this.error = err.error?.error || 'Failed to upload file';
-        this.uploading = false;
-      }
-    });
+    try {
+      await this.modalService.withLoading(
+        () => this.fileService.uploadFile(this.selectedFile!).toPromise(),
+        'Uploading file...'
+      );
+
+      this.success = 'File uploaded successfully!';
+      this.selectedFile = null;
+      this.loadFiles();
+      setTimeout(() => this.success = '', 3000);
+    } catch (err: any) {
+      this.error = err.error?.error || 'Failed to upload file';
+    }
   }
 
-  deleteFile(id: number): void {
-    if (!confirm('Are you sure you want to delete this file?')) {
-      return;
-    }
-
-    this.fileService.deleteFile(id).subscribe({
-      next: () => {
-        this.success = 'File deleted successfully!';
-        this.loadFiles();
-        setTimeout(() => this.success = '', 3000);
-      },
-      error: (err) => {
-        this.error = 'Failed to delete file';
-      }
+  async deleteFile(id: number): Promise<void> {
+    const confirmed = await this.modalService.confirm({
+      title: 'Delete File',
+      message: 'Are you sure you want to delete this file? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      type: 'danger'
     });
+
+    if (!confirmed) return;
+
+    try {
+      await this.modalService.withLoading(
+        () => this.fileService.deleteFile(id).toPromise(),
+        'Deleting file...'
+      );
+
+      this.success = 'File deleted successfully!';
+      this.loadFiles();
+      setTimeout(() => this.success = '', 3000);
+    } catch (err) {
+      this.error = 'Failed to delete file';
+    }
   }
 
   formatDate(date: string | Date): string {
@@ -151,8 +160,18 @@ export class UploadComponent implements OnInit {
     return 'U';
   }
 
-  logout(): void {
-    this.authService.logout();
+  async logout(): Promise<void> {
+    const confirmed = await this.modalService.confirm({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      type: 'warning'
+    });
+
+    if (confirmed) {
+      this.authService.logout();
+    }
   }
 
   toggleMobileMenu(): void {
