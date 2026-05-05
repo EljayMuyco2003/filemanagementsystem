@@ -14,12 +14,10 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Development server'
-      },
-      {
-        url: process.env.API_URL || 'https://your-api.railway.app',
-        description: 'Production server'
+        url: process.env.NODE_ENV === 'production' 
+          ? 'https://filemanagementsystem.up.railway.app'
+          : 'http://localhost:3000',
+        description: process.env.NODE_ENV === 'production' ? 'Production server' : 'Development server'
       }
     ],
     components: {
