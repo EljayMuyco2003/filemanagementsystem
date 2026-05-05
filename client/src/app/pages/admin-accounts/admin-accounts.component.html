@@ -1,0 +1,301 @@
+<div class="flex h-screen overflow-hidden bg-spotify-black">
+  <!-- Mobile Menu Button -->
+  <button 
+    (click)="toggleMobileMenu()"
+    class="md:hidden fixed top-4 left-4 z-50 p-2 bg-spotify-green text-black rounded-lg shadow-lg">
+    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+
+  <!-- Overlay for mobile -->
+  <div 
+    *ngIf="mobileMenuOpen"
+    (click)="closeMobileMenu()"
+    class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-30"></div>
+
+  <!-- Sidebar -->
+  <aside 
+    class="w-64 bg-black flex flex-col fixed md:relative h-full z-40 transition-transform duration-300"
+    [class.-translate-x-full]="!mobileMenuOpen"
+    [class.translate-x-0]="mobileMenuOpen"
+    [class.md:translate-x-0]="true">
+    
+    <!-- Close button for mobile -->
+    <button 
+      (click)="closeMobileMenu()"
+      class="md:hidden absolute top-4 right-4 text-white hover:text-spotify-green transition">
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+    <div class="p-6">
+      <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+        <svg class="h-8 w-8 text-spotify-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        File Portal
+      </h1>
+    </div>
+
+    <nav class="flex-1 px-4 space-y-2">
+      <a routerLink="/dashboard" (click)="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-spotify-darker rounded-lg transition">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        </svg>
+        Dashboard
+      </a>
+      <a routerLink="/profile" (click)="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-spotify-darker rounded-lg transition">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+        </svg>
+        My Profile
+      </a>
+      <a routerLink="/upload" (click)="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-spotify-darker rounded-lg transition">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+        </svg>
+        <span *ngIf="!isAdmin">Upload Files</span>
+        <span *ngIf="isAdmin">Manage Files</span>
+      </a>
+      <a routerLink="/templates" (click)="closeMobileMenu()" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-spotify-darker rounded-lg transition">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+        </svg>
+        Templates
+      </a>
+      <a *ngIf="isAdmin" routerLink="/admin/accounts" (click)="closeMobileMenu()" routerLinkActive="bg-spotify-darker" class="flex items-center gap-3 px-4 py-3 text-white hover:bg-spotify-darker rounded-lg transition">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        Admin
+      </a>
+    </nav>
+
+    <div class="p-4 border-t border-spotify-border">
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-full bg-spotify-green flex items-center justify-center text-black font-bold">
+          {{ userName.charAt(0).toUpperCase() }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-white text-sm font-semibold truncate">{{ userName }}</p>
+          <p class="text-spotify-gray text-xs">{{ isAdmin ? 'Admin' : 'User' }}</p>
+        </div>
+      </div>
+      <button (click)="logout()" class="w-full px-4 py-2 text-sm text-white hover:text-spotify-green transition">
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 overflow-y-auto bg-spotify-black">
+    <div class="container mx-auto p-8 pt-20 md:pt-8">
+      <!-- Header -->
+      <div class="mb-8 flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-white">User Accounts</h1>
+          <p class="mt-2 text-spotify-gray">Manage user accounts and permissions</p>
+        </div>
+        <button
+          (click)="toggleCreateForm()"
+          class="bg-spotify-green text-black hover:bg-spotify-green-hover font-bold rounded-full pill-button"
+        >
+          {{ showCreateForm ? 'CANCEL' : 'CREATE USER' }}
+        </button>
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="success" class="mb-6 bg-spotify-green/10 border border-spotify-green text-spotify-green p-4 rounded-lg">
+        {{ success }}
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error && !showCreateForm" class="mb-6 bg-spotify-red/10 border border-spotify-red text-spotify-red p-4 rounded-lg">
+        {{ error }}
+      </div>
+
+      <!-- Create User Form -->
+      <div *ngIf="showCreateForm" class="card-spotify-elevated mb-8">
+        <h2 class="text-xl font-bold text-white mb-4">Create New User</h2>
+        
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-4">
+          <!-- Email -->
+          <div class="space-y-2">
+            <label for="email" class="block text-spotify-gray font-bold uppercase text-xs tracking-wider">Email *</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="w-full px-4 py-2 bg-spotify-darker border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+              [class.border-spotify-red]="getFieldError('email')"
+              [class.border-spotify-border-light]="!getFieldError('email')"
+              [class.focus:ring-spotify-red]="getFieldError('email')"
+              [class.focus:ring-spotify-green]="!getFieldError('email')"
+              placeholder="user@example.com"
+            />
+            <div *ngIf="getFieldError('email')" class="text-spotify-red text-sm">
+              {{ getFieldError('email') }}
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div class="space-y-2">
+            <label for="password" class="block text-spotify-gray font-bold uppercase text-xs tracking-wider">Password *</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              class="w-full px-4 py-2 bg-spotify-darker border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+              [class.border-spotify-red]="getFieldError('password')"
+              [class.border-spotify-border-light]="!getFieldError('password')"
+              [class.focus:ring-spotify-red]="getFieldError('password')"
+              [class.focus:ring-spotify-green]="!getFieldError('password')"
+              placeholder="Minimum 8 characters"
+            />
+            <div *ngIf="getFieldError('password')" class="text-spotify-red text-sm">
+              {{ getFieldError('password') }}
+            </div>
+          </div>
+
+          <!-- Name Fields -->
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="space-y-2">
+              <label for="first_name" class="block text-spotify-gray font-bold uppercase text-xs tracking-wider">First Name *</label>
+              <input
+                id="first_name"
+                type="text"
+                formControlName="first_name"
+                class="w-full px-4 py-2 bg-spotify-darker border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+                [class.border-spotify-red]="getFieldError('first_name')"
+                [class.border-spotify-border-light]="!getFieldError('first_name')"
+                [class.focus:ring-spotify-red]="getFieldError('first_name')"
+                [class.focus:ring-spotify-green]="!getFieldError('first_name')"
+              />
+              <div *ngIf="getFieldError('first_name')" class="text-spotify-red text-sm">
+                {{ getFieldError('first_name') }}
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label for="last_name" class="block text-spotify-gray font-bold uppercase text-xs tracking-wider">Last Name *</label>
+              <input
+                id="last_name"
+                type="text"
+                formControlName="last_name"
+                class="w-full px-4 py-2 bg-spotify-darker border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+                [class.border-spotify-red]="getFieldError('last_name')"
+                [class.border-spotify-border-light]="!getFieldError('last_name')"
+                [class.focus:ring-spotify-red]="getFieldError('last_name')"
+                [class.focus:ring-spotify-green]="!getFieldError('last_name')"
+              />
+              <div *ngIf="getFieldError('last_name')" class="text-spotify-red text-sm">
+                {{ getFieldError('last_name') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Role -->
+          <div class="space-y-2">
+            <label for="role" class="block text-spotify-gray font-bold uppercase text-xs tracking-wider">Role *</label>
+            <select
+              id="role"
+              formControlName="role"
+              class="w-full px-4 py-2 bg-spotify-darker border border-spotify-border-light text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-spotify-green"
+            >
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="error" class="bg-spotify-red/10 border border-spotify-red text-spotify-red p-4 rounded-lg">
+            {{ error }}
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            [disabled]="creating"
+            class="w-full bg-spotify-green text-black hover:bg-spotify-green-hover font-bold rounded-full pill-button disabled:opacity-50"
+          >
+            <span *ngIf="!creating">CREATE USER</span>
+            <span *ngIf="creating">CREATING...</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center py-12">
+        <div class="h-12 w-12 spinner"></div>
+      </div>
+
+      <!-- Users Table -->
+      <div *ngIf="!loading && users.length > 0" class="card-spotify-elevated">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-white">All Users</h2>
+          <span class="text-spotify-gray text-sm">{{ users.length }} users</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="border-b border-spotify-border">
+                <th class="text-left py-3 px-4 text-spotify-gray font-bold uppercase text-xs tracking-wider">User</th>
+                <th class="text-left py-3 px-4 text-spotify-gray font-bold uppercase text-xs tracking-wider">Email</th>
+                <th class="text-left py-3 px-4 text-spotify-gray font-bold uppercase text-xs tracking-wider">Role</th>
+                <th class="text-left py-3 px-4 text-spotify-gray font-bold uppercase text-xs tracking-wider">Joined</th>
+                <th class="text-right py-3 px-4 text-spotify-gray font-bold uppercase text-xs tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users" class="border-b border-spotify-border hover:bg-spotify-darker transition">
+                <td class="py-4 px-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-spotify-green flex items-center justify-center text-black font-bold">
+                      {{ (user.first_name || user.email).charAt(0).toUpperCase() }}
+                    </div>
+                    <span class="text-white font-medium">
+                      <span *ngIf="user.first_name">{{ user.first_name }} {{ user.last_name }}</span>
+                      <span *ngIf="!user.first_name">{{ user.email }}</span>
+                    </span>
+                  </div>
+                </td>
+                <td class="py-4 px-4 text-spotify-gray">{{ user.email }}</td>
+                <td class="py-4 px-4">
+                  <span 
+                    class="px-3 py-1 text-xs font-bold rounded-full"
+                    [class.bg-spotify-green]="user.role === 'admin'"
+                    [class.text-black]="user.role === 'admin'"
+                    [class.bg-spotify-darker]="user.role !== 'admin'"
+                    [class.text-spotify-gray]="user.role !== 'admin'"
+                  >
+                    {{ user.role.toUpperCase() }}
+                  </span>
+                </td>
+                <td class="py-4 px-4 text-spotify-gray">{{ formatDate(user.created_at) }}</td>
+                <td class="py-4 px-4 text-right">
+                  <button
+                    (click)="deleteUser(user.id)"
+                    class="text-spotify-red hover:text-red-400 transition"
+                  >
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!loading && users.length === 0" class="card-spotify-elevated text-center py-12">
+        <svg class="mx-auto h-12 w-12 text-spotify-gray mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <p class="text-spotify-gray">No users found</p>
+      </div>
+    </div>
+  </main>
+</div>

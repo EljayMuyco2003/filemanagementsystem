@@ -1,0 +1,87 @@
+<div class="flex min-h-screen items-center justify-center bg-spotify-black px-4">
+  <div class="w-full max-w-md bg-spotify-dark border border-spotify-border rounded-lg card-spotify-elevated">
+    <!-- Header -->
+    <div class="text-center mb-6 pt-6">
+      <div class="flex justify-center mb-4">
+        <div class="rounded-full bg-spotify-green p-3">
+          <svg class="h-8 w-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+        </div>
+      </div>
+      <h1 class="text-2xl font-bold text-white">File Management Portal</h1>
+      <p class="mt-2 text-spotify-gray">Enter your credentials to access your account</p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4 px-6 pb-6">
+      <!-- Email -->
+      <div class="space-y-2">
+        <label for="email" class="block text-spotify-gray font-bold uppercase text-xs tracking-wider">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="admin&#64;portal.com"
+          [disabled]="loading"
+          class="w-full px-4 py-2 bg-spotify-darker border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-spotify-gray-dark transition-all"
+          [class.border-spotify-red]="getFieldError('email')"
+          [class.border-spotify-border-light]="!getFieldError('email')"
+          [class.focus:ring-spotify-red]="getFieldError('email')"
+          [class.focus:ring-spotify-green]="!getFieldError('email')"
+        />
+        <div *ngIf="getFieldError('email')" class="text-spotify-red text-sm">
+          {{ getFieldError('email') }}
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="space-y-2">
+        <label for="password" class="block text-spotify-gray font-bold uppercase text-xs tracking-wider">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          [disabled]="loading"
+          class="w-full px-4 py-2 bg-spotify-darker border text-white rounded-lg focus:outline-none focus:ring-2 focus:border-transparent placeholder-spotify-gray-dark transition-all"
+          [class.border-spotify-red]="getFieldError('password')"
+          [class.border-spotify-border-light]="!getFieldError('password')"
+          [class.focus:ring-spotify-red]="getFieldError('password')"
+          [class.focus:ring-spotify-green]="!getFieldError('password')"
+        />
+        <div *ngIf="getFieldError('password')" class="text-spotify-red text-sm">
+          {{ getFieldError('password') }}
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="rounded-md bg-spotify-red/10 border border-spotify-red p-3 text-sm text-spotify-red">
+        {{ error }}
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="w-full bg-spotify-green text-black hover:bg-spotify-green-hover font-bold rounded-full pill-button disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <span *ngIf="!loading">SIGN IN</span>
+        <span *ngIf="loading" class="flex items-center justify-center">
+          <svg class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          SIGNING IN...
+        </span>
+      </button>
+    </form>
+
+    <!-- Demo Credentials -->
+    <div class="px-6 pb-6 text-center text-sm text-spotify-gray space-y-1">
+      <p class="font-semibold text-white">Demo accounts:</p>
+      <p class="mt-2">Admin: <span class="text-spotify-green">admin&#64;portal.com</span> / Admin&#64;1234</p>
+      <p>User: <span class="text-spotify-green">user&#64;portal.com</span> / User&#64;1234</p>
+    </div>
+  </div>
+</div>

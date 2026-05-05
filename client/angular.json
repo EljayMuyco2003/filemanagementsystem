@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "file-management-portal": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/file-management-portal",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.app.json",
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.css"],
+            "scripts": []
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "file-management-portal:build"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "52f6b63a-161c-4c1c-9384-9b9f11fd4f70"
+  }
+}
