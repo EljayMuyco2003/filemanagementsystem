@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
+import { gmailValidator } from '../../validators/email.validator';
 
 @Component({
   selector: 'app-admin-accounts',
@@ -36,7 +37,7 @@ export class AdminAccountsComponent implements OnInit {
     this.isAdmin = this.authService.isAdmin();
 
     this.userForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, gmailValidator()]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       first_name: ['', [Validators.required, Validators.minLength(2)]],
       last_name: ['', [Validators.required, Validators.minLength(2)]],
@@ -58,7 +59,7 @@ export class AdminAccountsComponent implements OnInit {
     const field = this.userForm.get(fieldName);
     if (field?.errors && field.touched) {
       if (field.errors['required']) return `${fieldName.replace('_', ' ')} is required`;
-      if (field.errors['email']) return 'Please enter a valid email';
+      if (field.errors['gmail']) return 'Only @gmail.com emails are allowed';
       if (field.errors['minlength']) return `${fieldName.replace('_', ' ')} must be at least ${field.errors['minlength'].requiredLength} characters`;
     }
     return '';
