@@ -35,7 +35,7 @@ export class LoginComponent {
     const field = this.loginForm.get(fieldName);
     if (field?.errors && field.touched) {
       if (field.errors['required']) return `${fieldName} is required`;
-      if (field.errors['gmail']) return 'Only @gmail.com emails are allowed';
+      if (field.errors['gmail']) return 'Invalid email';
       if (field.errors['minlength']) return `${fieldName} must be at least ${field.errors['minlength'].requiredLength} characters`;
     }
     return '';

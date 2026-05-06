@@ -1,7 +1,7 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
- * Custom validator that only accepts @gmail.com emails
+ * Custom validator that only accepts @gmail.com and @portal.com emails
  */
 export function gmailValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -10,9 +10,9 @@ export function gmailValidator(): ValidatorFn {
     }
 
     const email = control.value.toLowerCase();
-    const gmailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+    const allowedPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|portal\.com)$/;
 
-    if (!gmailPattern.test(email)) {
+    if (!allowedPattern.test(email)) {
       return { gmail: true };
     }
 
