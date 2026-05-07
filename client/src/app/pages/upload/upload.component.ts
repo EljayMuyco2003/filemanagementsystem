@@ -130,6 +130,19 @@ export class UploadComponent implements OnInit {
     }
   }
 
+  downloadFile(fileUrl: string, fileName: string): void {
+    const fullUrl = environment.apiUrl.replace('/api', '') + fileUrl;
+    
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement('a');
+    link.href = fullUrl;
+    link.download = fileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   formatDate(date: string | Date): string {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     return dateObj.toLocaleDateString('en-US', {

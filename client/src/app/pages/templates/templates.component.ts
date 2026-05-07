@@ -177,6 +177,19 @@ export class TemplatesComponent implements OnInit {
     });
   }
 
+  downloadTemplate(fileUrl: string, fileName: string): void {
+    const fullUrl = environment.apiUrl.replace('/api', '') + fileUrl;
+    
+    // Create a temporary anchor element to trigger download
+    const link = document.createElement('a');
+    link.href = fullUrl;
+    link.download = fileName;
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   async logout(): Promise<void> {
     const confirmed = await this.modalService.confirm({
       title: 'Logout',

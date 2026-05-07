@@ -217,17 +217,15 @@
           <div class="flex items-center justify-between pt-4 border-t border-spotify-border gap-2">
             <span class="text-spotify-gray text-xs">{{ formatDate(template.created_at.toString()) }}</span>
             <div class="flex items-center gap-2">
-              <a
-                [href]="environment.apiUrl.replace('/api', '') + template.file_url"
-                download
-                target="_blank"
+              <button
+                (click)="downloadTemplate(template.file_url, template.name)"
                 class="text-spotify-green hover:text-spotify-green-hover transition"
                 title="Download template"
               >
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                 </svg>
-              </a>
+              </button>
               <button
                 *ngIf="isAdmin"
                 (click)="deleteTemplate(template.id)"

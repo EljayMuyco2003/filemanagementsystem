@@ -212,16 +212,14 @@
                 <td class="py-4 px-4 text-spotify-gray">{{ formatDate(file.uploaded_at) }}</td>
                 <td class="py-4 px-4 text-right">
                   <div class="flex items-center justify-end gap-2">
-                    <a
-                      [href]="environment.apiUrl.replace('/api', '') + file.file_url"
-                      download
-                      target="_blank"
+                    <button
+                      (click)="downloadFile(file.file_url, file.file_name)"
                       class="text-spotify-green hover:text-spotify-green-hover transition"
                       title="Download file">
                       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                       </svg>
-                    </a>
+                    </button>
                     <button
                       (click)="deleteFile(file.id)"
                       class="text-spotify-red hover:text-red-400 transition"
