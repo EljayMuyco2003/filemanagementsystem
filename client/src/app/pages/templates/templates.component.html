@@ -218,8 +218,9 @@
             <span class="text-spotify-gray text-xs">{{ formatDate(template.created_at.toString()) }}</span>
             <div class="flex items-center gap-2">
               <a
-                [href]="'http://localhost:3000' + template.file_url"
+                [href]="environment.apiUrl.replace('/api', '') + template.file_url"
                 download
+                target="_blank"
                 class="text-spotify-green hover:text-spotify-green-hover transition"
                 title="Download template"
               >

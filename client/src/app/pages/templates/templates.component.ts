@@ -6,6 +6,7 @@ import { TemplateService } from '../../services/template.service';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { Template } from '../../models/template.model';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-templates',
@@ -26,6 +27,7 @@ export class TemplatesComponent implements OnInit {
   showCreateForm = false;
   selectedFile: File | null = null;
   mobileMenuOpen = false;
+  environment = environment;
 
   categories = [
     'Document',

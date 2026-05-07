@@ -5,6 +5,7 @@ import { FileService } from '../../services/file.service';
 import { AuthService } from '../../services/auth.service';
 import { ModalService } from '../../services/modal.service';
 import { UploadedFile, FileWithUser } from '../../models/file.model';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-upload',
@@ -24,6 +25,7 @@ export class UploadComponent implements OnInit {
   selectedFile: File | null = null;
   dragOver = false;
   mobileMenuOpen = false;
+  environment = environment;
 
   constructor(
     private fileService: FileService,
