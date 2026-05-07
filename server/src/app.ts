@@ -37,8 +37,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('combined'));
 }
 
-// Serve uploaded files
-app.use('/uploads', express.static('uploads'));
+// Serve uploaded files with download headers
+app.use('/uploads', (req, res, next) => {
+  // Force download for all files
+  res.setHeader('Content-Disposition', 'attachment');
+  next();
+}, express.static('uploads'));
 
 // API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
